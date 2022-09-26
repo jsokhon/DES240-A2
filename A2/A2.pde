@@ -11,6 +11,10 @@ boolean notesFall = false;
 boolean oneNoteFalls = true;
 int counter = 0;
 
+int index = 0;
+
+boolean startsFalling = false;
+
 int numOfGreenNotes = 7;
 int numOfOrangeNotes = 3;
 
@@ -31,17 +35,13 @@ int orangeMaxY = -100;
 int posX = 0;
 
 //PImage [] allImages = new PImage[10];
-Notes [] allNotes = new Notes[10];
+Notes [] allNotes = new Notes[numOfGreenNotes+numOfOrangeNotes];
 int count = 0;
 
 void setup() {
   size(1080, 1080);
   blueBG = loadImage("Assets/blueBG.png");
-  //image(blueBG, 0, 0);
   treeBackground = loadImage("Assets/treeBG.png");
-  //image(treeBackground, 0, 0);
-  //buildings = loadImage("Assets/buildings.png");
-  //image(buildings, 0, 0);
 
   treeAndBuildingBG = loadImage("Assets/treeandbuildingBG.png");
 
@@ -65,9 +65,6 @@ void draw() {
   image(blueBG, 0, 0);
   image(treeAndBuildingBG, 0, 0);
 
-
-
-
   for (int i=0; i < 10; i++) {
     allNotes[i].display();
   }
@@ -76,32 +73,40 @@ void draw() {
     notesFall = true;
   }
 
-  if (notesFall && oneNoteFalls) { // 1 has fallen, then the next falls 
-    //allNotes[1].notesFall();
-    for (int i=0; i < 10; i++) { // iterates thru what falls
-      
-      allNotes[i].notesFall();
-      oneNoteFalls = true;
-    }
 
-    /*
-  //image(treeBackground, 0, 0);
-     image(orangeNote, 70, height-400);
-     pushMatrix();
-     translate(width/2, height/2);
-     tint(0, 153, 204);  // Tint blue
-     image(orangeNote, 70, height-200);
-     
-     popMatrix()
-     */
+  if (notesFall) { // 1 has fallen, then the next falls
+    allNotes[counter].notesFall();
   }
+
+
+  if (notesFall) {
+    if (int(random(1, 50)) == 1) {
+      startsFalling = true;
+    }
+  }
+  
+
+
+
+  /*
+  //image(treeBackground, 0, 0);
+   image(orangeNote, 70, height-400);
+   pushMatrix();
+   translate(width/2, height/2);
+   tint(0, 153, 204);  // Tint blue
+   image(orangeNote, 70, height-200);
+   
+   popMatrix()
+   */
 }
+
 
 
 class Notes { //class for all notes
   float angle = 0;
   float xPos;
   float yPos;
+  float originalYPos;
   float xSpeed = cos(radians(angle*10)) * 20; // speed the note floats to using cos
   float ySpeed = sin(radians(angle*10)) * 40; // speed the note floats
   float rotation;
@@ -113,6 +118,7 @@ class Notes { //class for all notes
     yPos = y;
     note = noteColour;
     rotation = 0;
+    originalYPos = y;
   }
 
   void display() {
@@ -122,48 +128,35 @@ class Notes { //class for all notes
     image(note, xPos, yPos);
     popMatrix();
   }
+  
+  
+  void reset(){
+    
+  }
 
   void notesFall() {
-    
-    /*
-    if (yPos > height) {
-      yPos = 0;
-    }
-    */
-    yPos++;
+
+    yPos+=5;
+   
     image(frontBuildings, 0, 0); // edit image later
-    
-    if (yPos >height-20){
+
+
+    if (yPos > 200) {
+
+      // trigger the next none
+      counter++;
+      println(counter);
       oneNoteFalls = false;
     }
-
-    /*
-    yPos = yPos + ySpeed;
-     xPos = xPos + xSpeed;
-     if (yPos > height-20) {
-     ySpeed = 0;
-     xSpeed = 0;
-     }
-     if (yPos < height-20) {
-     rotation = random(0, PI);
-     }
-     */
+    if (counter > numOfGreenNotes+numOfOrangeNotes-1) {
+      counter = 0;
+      yPos = originalYPos;
+      display();
+    }
 
 
-    /*
-    xPos = xPos + xSpeed;
-     yPos = yPos + ySpeed;
-     yPos = max(yPos,-yPos);
-     angle ++;
-     if (yPos < height-400) {   // hides behind the buildings)
-     xSpeed = 0;
-     ySpeed = 0;
-     }
-     
-     if (yPos > height-400) {
-     
-     
-     }
-     */
+
+    if (notesFall && startsFalling) { // 1 has fallen, then the next falls
+    }
   }
 }
