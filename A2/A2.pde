@@ -7,10 +7,7 @@ PImage frontBuildings; // when images fall behind it
 PImage justTree;
 PImage treeAndBuildingBG;
 
-boolean notesFall = false;
-boolean oneNoteFalls = true;
 int counter = 0;
-
 int index = 0;
 
 int numOfGreenNotes = 7;
@@ -65,6 +62,7 @@ void draw() {
     allNotes[i].checkFalling();
     allNotes[i].notesFall();
   }
+
 }
 
 class Notes { //class for all notes
@@ -77,8 +75,9 @@ class Notes { //class for all notes
   float rotation;
   PImage note;
   boolean startsFallingNote = false;
-  float fallSpeed = 2;
   int randomStart = (int)random(1, 750);
+  float gravity= 0.06;
+  float fallSpeed = 1;
 
 
   Notes(float x, float y, PImage noteColour) {
@@ -93,13 +92,11 @@ class Notes { //class for all notes
     pushMatrix();
     translate(width/2, height/2); // have it drawing from 0,0 centred.
     rotate(rotation);
-    if (startsFallingNote && yPos > 200) {
-      yPos += fallSpeed;
-    }
     image(note, xPos, yPos);
     popMatrix();
+    image(frontBuildings, 0, 0); // edit image later
   }
-
+  
   void checkFalling() {
     if (frameCount % randomStart == 0 && yPos <= 200) {
       startsFallingNote = true;
@@ -107,16 +104,15 @@ class Notes { //class for all notes
     if (startsFallingNote && yPos > 200) {
       yPos = origY;
       startsFallingNote = false;
+      fallSpeed = 1;
     }
   }
-
+  
   void notesFall() {
     if (startsFallingNote) { // 1 has fallen, then the next falls
-      yPos += ySpeed;
-      xPos += xSpeed;
-    
-      //yPos++;
-      image(frontBuildings, 0, 0); // edit image later
+      fallSpeed += gravity;
+      yPos += fallSpeed;
+      
+      }
     }
   }
-}
